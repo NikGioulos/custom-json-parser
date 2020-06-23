@@ -2,7 +2,7 @@ package online.nikos.example.parser.json;
 
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
@@ -15,7 +15,7 @@ public class JsonParser {
 
     public Map<String, String> parse(String json) {
 
-        this.map = new HashMap<>();
+        this.map = new LinkedHashMap<>(); //since we want FIFO sorting
         this.str = json;
         this.i=0;
 
