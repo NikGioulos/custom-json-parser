@@ -29,7 +29,7 @@ public class JsonParser {
 
         String[] strNames = new String[100];
 
-        String currentString="";
+        StringBuffer currentString = new StringBuffer();
 
         while(this.i < this.str.length()) {
 
@@ -48,14 +48,14 @@ public class JsonParser {
                     strNames[depth] =  strNames[depth-1];
                 }
             } else if(c=='}'){//end object event
-                myData(strNames[depth],currentString);
-                currentString = "";
+                myData(strNames[depth],currentString.toString());
+                currentString.setLength(0); //clear
                 depth -= 1;
                 arrayPendingObj = false;
             } else if(c==','){//end value event, start key event
-                myData(strNames[depth],currentString);
-                currentString = "";
                 if(!arrayPending) {
+                myData(strNames[depth],currentString.toString());
+                currentString.setLength(0); //clear
                     int lastSlash = strNames[depth].lastIndexOf("/");
                     strNames[depth] = strNames[depth].substring(0, lastSlash);
                 } else if(arrayPendingObj){ //we are within an array of object items
@@ -66,8 +66,8 @@ public class JsonParser {
                     strNames[depth] = strNames[depth].substring(0,strNames[depth].length()-2) + (arrayIndex++) + "]";
                 }
             } else if(c==':') {//end name, start value event
-                strNames[depth] += "/" + stripWrapQuotes(currentString);
-                currentString = "";
+                strNames[depth] += "/" + stripWrapQuotes(currentString.toString());
+                currentString.setLength(0); //clear
                 if (arrayPending){
                     arrayPendingObj = true; //its an objects array, not String array
                 }
@@ -77,10 +77,10 @@ public class JsonParser {
                 strNames[depth] += "[" + (arrayIndex++) + "]";
             } else if(c==']') {//end array event
                 arrayPending = false;
-                myData(strNames[depth],currentString);
-                currentString = "";
+                myData(strNames[depth],currentString.toString());
+                currentString.setLength(0); //clear
             } else{
-                currentString += c;
+                currentString.append(c);
             }
             this.i++;
         }
